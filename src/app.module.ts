@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './features/user/user.module';
 import { WebhookModule } from './features/webhook/webhook.module';
 import { AuthModule } from './features/auth/auth.module';
+import { NoteModule } from './features/note/note.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './features/auth/auth.module';
     UserModule,
     WebhookModule,
     AuthModule,
+    NoteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

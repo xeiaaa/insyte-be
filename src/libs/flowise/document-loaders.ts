@@ -1,6 +1,14 @@
+import { AxiosResponse } from 'axios';
 import { flowiseApi } from './axios';
+import {
+  BaseDocumentLoader,
+  DocumentLoaderProcessResponse,
+} from './types/document-loader.types';
 
-export const create = async (documentStoreId: string, txtFile: string) => {
+export const create = async (
+  documentStoreId: string,
+  txtFile: string,
+): Promise<AxiosResponse<BaseDocumentLoader>> => {
   return flowiseApi.post('/document-store/loader/save', {
     loaderConfig: {
       metaData: JSON.stringify({ key: 'value' }),
@@ -14,7 +22,10 @@ export const create = async (documentStoreId: string, txtFile: string) => {
   });
 };
 
-export const process = async (documentLoaderId: string, body: any) => {
+export const process = async (
+  documentLoaderId: string,
+  body: any,
+): Promise<AxiosResponse<DocumentLoaderProcessResponse>> => {
   return flowiseApi.post(
     `/document-store/loader/process/${documentLoaderId}`,
     body,

@@ -2,6 +2,11 @@
 // Enums
 // ==============================
 
+import {
+  BaseDocumentLoader,
+  DocumentLoaderFile,
+} from './document-loader.types';
+
 export enum DocumentStoreStatus {
   EMPTY = 'EMPTY',
   SYNC = 'SYNC',
@@ -62,7 +67,7 @@ export interface RecordManagerConfig {
 export interface BaseDocumentStore {
   id: string;
   name: string;
-  loaders: string;
+  loaders: string | (BaseDocumentLoader & { files: DocumentLoaderFile[] })[];
   whereUsed: string;
   status: DocumentStoreStatus;
   description: string | null;
@@ -119,3 +124,11 @@ export type UpdateDocumentStoreBody = Partial<
 export type ParsedVectorStoreConfig = NamedConfig<VectorStoreConfig>;
 export type ParsedEmbeddingConfig = NamedConfig<EmbeddingConfig>;
 export type ParsedRecordManagerConfig = NamedConfig<RecordManagerConfig>;
+
+export interface UpsertAllResponse {
+  numAdded: number;
+  addedDocs: any[];
+  totalChars: number;
+  totalChunks: number;
+  whereUsed: any[];
+}

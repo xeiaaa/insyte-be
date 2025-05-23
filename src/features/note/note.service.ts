@@ -87,4 +87,64 @@ export class NoteService {
       sort,
     });
   }
+
+  async createDocumentLoader(_id: string, file: Express.Multer.File) {
+    const note = await this.getById(_id);
+    if (!note) {
+      throw new NotFoundException('Note not found');
+    }
+
+    const base64String = file.buffer.toString('base64');
+    const txtFile = `data:${file.mimetype};base64,${base64String},filename:${file.originalname}`;
+
+    const { data: createResponse } = await flowise.documentLoaders.create(
+      note.documentStoreId.toString(),
+      txtFile,
+    );
+
+    const { data: processResponse } = await flowise.documentLoaders.process(
+      createResponse.id,
+      {
+        loaderConfig: createResponse.loaderConfig,
+        loaderId: createResponse.loaderId,
+        loaderName: createResponse.loaderName,
+        storeId: note.documentStoreId.toString(),
+      },
+    );
+
+    // ✅ Return only the relevant part (e.g., response.data)
+    return processResponse;
+  }
+
+  async upsertAll(_id: string) {
+    const note = await this.getById(_id);
+    if (!note) {
+      throw new NotFoundException('Note not found');
+    }
+
+    const { data } = await flowise.documentStores.upsertAll(
+      note.documentStoreId,
+    );
+
+    return data;
+  }
+
+  async getAllFiles(_id: string) {
+    const note = await this.getById(_id);
+    if (!note) {
+      throw new NotFoundException('Note not found');
+    }
+
+    const { data } = await flowise.documentStores.get(note.documentStoreId);
+    if (Array.isArray(data.loaders)) {
+      return data.loaders.map((loader) => {
+        return {
+          ...loader.files[0],
+          loaderId: loader.id,
+        };
+      });
+    } else {
+      return [];
+    }
+  }
 }
